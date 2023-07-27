@@ -82,8 +82,9 @@ def evaluate_fitness_in_threads(population):
     return fitness_values
 
 
-def genetic_algorithm_solver(board):
+def genetic_algorithm_solver(board, puzzle):
     # Initialize a population of random Sudoku boards
+    filename = "./" + "backend/data/" + NAME + "/" + puzzle + ".json"
     for i in range(1):
         print(str(i + 1) + "th try")
         population = [createIndividual(board) for _ in range(1000)]
@@ -103,12 +104,12 @@ def genetic_algorithm_solver(board):
                 if is_solved(board):
                     print("Sudoku is solved")
                     data_store = SolveDataStore(population[0])
-                    data_store.save_board(population[0].get_unwrapped_state(), "result.json")
+                    data_store.save_board(population[0].get_unwrapped_state(), filename)
                     return board
 
         print("Not solved, best approximation")
         data_store = SolveDataStore(population[0])
-        data_store.save_board(population[0], "result.json")
+        data_store.save_board(population[0], filename)
         return population[0]  # No solution found within the given number of generations
 
 
@@ -199,9 +200,7 @@ def is_solved(board):
 def main(puzzle):
     input_board = parse_puzzle(puzzle)
     board = Board(input_board)
-    data_store = SolveDataStore(board)
-    print_board(genetic_algorithm_solver(board))
-    data_store.save("./" + NAME + "/" + puzzle + ".json")
+    print_board(genetic_algorithm_solver(board, puzzle))
 
 
 example = "070000043040009610800634900094052000358460020000800530080070091902100005007040802"
