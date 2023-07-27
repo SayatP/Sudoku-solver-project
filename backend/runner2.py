@@ -31,7 +31,7 @@ results = {
 
 for k, v in algos.items():
     global_start = time.time()
-    for puzzle in tqdm.tqdm(puzzles[:500]):
+    for puzzle in tqdm.tqdm(puzzles[500:]):
         # backtracking(puzzle)
         # backtracking_ac3(puzzle)
         t1 = time.time()
