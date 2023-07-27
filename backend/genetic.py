@@ -85,7 +85,7 @@ def evaluate_fitness_in_threads(population):
 def genetic_algorithm_solver(board, puzzle):
     # Initialize a population of random Sudoku boards
     filename = "./" + "backend/data/" + NAME + "/" + puzzle + ".json"
-    for i in range(1):
+    for i in range(10):
         print(str(i + 1) + "th try")
         population = [createIndividual(board) for _ in range(1000)]
         for generation in range(100):
