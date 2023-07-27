@@ -4,15 +4,17 @@ from shared.board import Board
 from shared.validation import get_basic_domain, get_domains_for_all_empty_cells
 
 from shared.store import print_board, SolveDataStore
+from shared.parser import parse_puzzle
 
 global STEP
+global Reached_first_line_right
+
 STEP = 0
+NAME = "dfs"
 
 
-def solve_sudoku(board: Board, data_store):
+def dfs(board: Board, data_store, domains):
     global STEP
-
-    data_store.store(STEP, domains=None)
 
     empty_cell = find_empty_cell(board)
 
@@ -22,30 +24,26 @@ def solve_sudoku(board: Board, data_store):
     row, col = empty_cell
 
     domain = get_basic_domain(board, row, col)
-    for value in domain:
+
+    for value in sorted(domain)[::-1]:
         board.setItem(row, col, value)
         STEP += 1
-        if solve_sudoku(board, data_store):
+
+        data_store.store(STEP, domains=domains)
+
+
+        if dfs(board, data_store, domains):
             return True
 
         # Backtrack if the current number didn't lead to a solution
         board.setItem(row, col, 0)
+        STEP += 1
+
+        data_store.store(STEP, domains=domains)
 
     return False
 
 
-# Example Sudoku board (0 represents empty cells)
-input_board = [
-    [5, 3, 0, 0, 7, 0, 0, 0, 0],
-    [6, 0, 0, 1, 9, 5, 0, 0, 0],
-    [0, 9, 8, 0, 0, 0, 0, 6, 0],
-    [8, 0, 0, 0, 6, 0, 0, 0, 3],
-    [4, 0, 0, 8, 0, 3, 0, 0, 1],
-    [7, 0, 0, 0, 2, 0, 0, 0, 6],
-    [0, 6, 0, 0, 0, 0, 2, 8, 0],
-    [0, 0, 0, 4, 1, 9, 0, 0, 5],
-    [0, 0, 0, 0, 8, 0, 0, 7, 9],
-]
 
 # So far, dfs is the only one who managed to "solve" this in resonable time
 
@@ -61,13 +59,27 @@ input_board = [
 #     [0, 0, 0, 0, 0, 0, 0, 0, 0],
 # ]
 
-if __name__ == "__main__":
+
+def main(puzzle):
+    input_board = parse_puzzle(puzzle)
     board = Board(input_board)
+    domains, _ = get_domains_for_all_empty_cells(board)
+
     data_store = SolveDataStore(board)
-    if solve_sudoku(board, data_store):
+    if dfs(board, data_store, domains):
         print("Sudoku solved:")
         print_board(board)
     else:
         print("No solution exists for the given Sudoku board.")
 
-    data_store.save("result.json")
+    data_store.save("./" + NAME + "/" + puzzle + ".json")
+
+
+example = "070000043040009610800634900094052000358460020000800530080070091902100005007040802"
+example_extra = "000006300000200005080000000006200040000000010000090000910080000000600078000000090"
+example_hard = "009073000607000008000800937092008654053649172000125800700000010004000009968302000"
+
+example_sayat = "500200040000603000030009007003007000007008000600000020080000003000400600000100500"
+zeros = '000000000000000000000000000000000000000000000000000000000000000000000000000000000'
+
+main("000006300000200005080000000006200040000000010000090000910080000000600078000000090")

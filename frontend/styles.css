@@ -2,12 +2,14 @@ body {
   margin: 0;
   padding: 0;
 }
+
 div {
   overflow: hidden;
   box-sizing: border-box;
   color: #326273;
 
 }
+
 .outer-grid {
   position: relative;
   float: left;
@@ -15,6 +17,7 @@ div {
   padding-bottom: 33.3%;
   /* border: 1px solid #E39774; */
 }
+
 .outer-square {
   position: absolute;
   left: 0;
@@ -28,12 +31,14 @@ div {
   display: flex;
   flex-wrap: wrap;
 }
+
 .inner-grid {
   width: 33.3%;
   height: 33.3%;
   border: 1px solid #2e5b6b;
   display: table;
 }
+
 .inner-square {
   line-height: 100%;
   font-size: 50px;
@@ -49,4 +54,46 @@ div {
   display: table-cell;
   vertical-align: middle;
   color: rgb(180, 35, 35)
+}
+
+
+#game_form {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+}
+
+label {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin: 5px auto;
+}
+
+button {
+  margin: 5px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  background-color: #2e5b6b;
+  color: #EEEEEE;
+  border: 1px solid #2e5b6b;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+}
+
+p {
+  color: #2e5b6b;
+  font-size: 34px;
+  font-weight: bold;
+  text-align: center;
+
+}
+
+.grid-container {
+  width: 1200px;
 }

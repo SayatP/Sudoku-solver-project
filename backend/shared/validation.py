@@ -4,13 +4,8 @@ def is_valid(board_data, row, col, num):
         return False
 
     # Check if the number is not already present in the column
-    try:
-        if num in [board_data[i][col] for i in range(9)]:
-            return False
-    except Exception:
-        import pdb
-
-        pdb.set_trace()
+    if num in [board_data[i][col] for i in range(9)]:
+        return False
 
     # Check if the number is not already present in the 3x3 grid
     start_row, start_col = 3 * (row // 3), 3 * (col // 3)
