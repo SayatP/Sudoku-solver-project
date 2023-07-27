@@ -6,7 +6,7 @@ from choose_empty_cell import find_empty_cell
 from shared.board import Board
 from shared.validation import get_domains_for_all_empty_cells
 
-from shared.output import print_board, SolveData
+from shared.store import print_board, SolveDataStore
 
 global STEP
 STEP = 0
@@ -53,11 +53,8 @@ def ac3(board):
     return domains
 
 
-
-
-def solve_sudoku(board: Board, data_store):
+def solve_sudoku(board: Board, data_store: SolveDataStore):
     global STEP
-    data_store.store(STEP)
 
     empty_cell = find_empty_cell(board)
 
@@ -67,9 +64,11 @@ def solve_sudoku(board: Board, data_store):
     row, col = empty_cell
     domains = ac3(board)
 
+
     if not domains:
         return False
 
+    data_store.store(STEP, domains)
 
     for cell, values in domains.items():
         if len(values) == 1:
@@ -109,9 +108,10 @@ input_board = [
 ]
 
 
+
 if __name__ == "__main__":
     board = Board(input_board)
-    data_store = SolveData(board)
+    data_store = SolveDataStore(board)
     if solve_sudoku(board, data_store):
         print("Sudoku solved:")
         print_board(board)

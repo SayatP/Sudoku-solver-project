@@ -10,14 +10,8 @@ class Board:
         self.data[i][j] = val
         self.domains[i][j] = None
 
-    def getDomain(self, i, j):
-        return self.domains[i][j]
-
-    def setDomain(self, i, j, val):
-        self.domains[i][j] = val
-
     def get_current_state(self):
-        return {"board": self.data, "domains": self.domains}
+        return self.data
 
     def get_neighbors(self, i, j):
         neighbors = []

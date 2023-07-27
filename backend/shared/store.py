@@ -12,14 +12,19 @@ def print_board(board):
             print("- " * 11)
 
 
-class SolveData:
+class SolveDataStore:
     def __init__(self, board) -> None:
         self.data = {}
         self.board = board
+        self.index = 0
 
-    def store(self, step):
-        self.data[step] = self.board.get_current_state()
+    def store(self, step, domains):
+        self.data[self.index] = {'board': self.board.get_current_state(), 'step': step}
 
+        if domains is not None:
+            self.data['domains'] = {f"{k[0]}{k[1]}": list(v) for k,v in domains.items()}
+        self.index += 1
+    
     def save(self, filename):
         with open(filename, "w+") as f:
             json.dump(self.data, f)

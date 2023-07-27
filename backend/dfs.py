@@ -1,9 +1,9 @@
 from choose_empty_cell import find_empty_cell
 
 from shared.board import Board
-from shared.validation import get_basic_domain
+from shared.validation import get_basic_domain, get_domains_for_all_empty_cells
 
-from shared.output import print_board, SolveData
+from shared.store import print_board, SolveDataStore
 
 global STEP
 STEP = 0
@@ -11,7 +11,8 @@ STEP = 0
 
 def solve_sudoku(board: Board, data_store):
     global STEP
-    data_store.store(STEP)
+
+    data_store.store(STEP, domains=None)
 
     empty_cell = find_empty_cell(board)
 
@@ -46,10 +47,23 @@ input_board = [
     [0, 0, 0, 0, 8, 0, 0, 7, 9],
 ]
 
+# So far, dfs is the only one who managed to "solve" this in resonable time
+
+# input_board = [
+#     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+# ]
 
 if __name__ == "__main__":
     board = Board(input_board)
-    data_store = SolveData(board)
+    data_store = SolveDataStore(board)
     if solve_sudoku(board, data_store):
         print("Sudoku solved:")
         print_board(board)

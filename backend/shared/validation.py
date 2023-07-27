@@ -24,7 +24,6 @@ def is_valid(board_data, row, col, num):
 
 def get_basic_domain(board, row, col):
     domain = [i for i in range(1, 10) if is_valid(board.data, row, col, i)]
-    board.setDomain(row, col, domain)
     return domain
 
 def get_domains_for_all_empty_cells(board):
