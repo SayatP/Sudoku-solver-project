@@ -4,14 +4,15 @@ from os import path
 
 
 def print_board(board):
-    for i in range(9):
-        for j in range(9):
-            print(board.getItem(i, j), end=" ")
-            if (j + 1) % 3 == 0:
-                print("|", end=" ")
-        print()
-        if (i + 1) % 3 == 0:
-            print("- " * 11)
+    pass
+    # for i in range(9):
+    #     for j in range(9):
+    #         print(board.getItem(i, j), end=" ")
+    #         if (j + 1) % 3 == 0:
+    #             print("|", end=" ")
+    #     print()
+    #     if (i + 1) % 3 == 0:
+    #         print("- " * 11)
 
 
 class SolveDataStore:
