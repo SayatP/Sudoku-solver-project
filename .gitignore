@@ -160,3 +160,6 @@ cython_debug/
 #.idea/
 
 .vscode/
+/backtracking
+/backtracking_ac3
+/backend/data

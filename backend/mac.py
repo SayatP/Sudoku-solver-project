@@ -1,5 +1,5 @@
 from queue import Queue
-from copy import copy
+from copy import deepcopy
 
 from choose_empty_cell import find_empty_cell
 
@@ -9,12 +9,10 @@ from shared.validation import get_domains_for_all_empty_cells
 from shared.store import print_board, SolveDataStore
 from shared.parser import parse_puzzle
 
-global STEP
-STEP = 0
-NAME = "dfs_ac3"
 
-def ac3(board, data_store):
-    global STEP
+NAME = "mac"
+
+def ac3(board, data_store, STEP):
 
     def revise(X1, X2):
         revised = False
@@ -53,23 +51,21 @@ def ac3(board, data_store):
             STEP += 1
             data_store.store(STEP, domains)
 
-    return domains
+    return domains, STEP
 
 
-def dfs_with_ac3(board: Board, data_store: SolveDataStore):
-    global STEP
-
+def backtracking_with_ac3(board: Board, data_store: SolveDataStore, STEP):
     empty_cell = find_empty_cell(board)
 
     if not empty_cell:
-        return True  # The board is already filled, so it's solved
+        return True, STEP  # The board is already filled, so it's solved
 
     row, col = empty_cell
-    domains = ac3(board, data_store)
 
-
+    domains = ac3(board, data_store, STEP)
     if not domains:
-        return False
+        return False, STEP
+    domains, STEP = domains
 
     data_store.store(STEP, domains)
 
@@ -78,25 +74,30 @@ def dfs_with_ac3(board: Board, data_store: SolveDataStore):
             row, col = cell
             board.setItem(row, col, next(iter(values)))
             STEP += 1
-            if dfs_with_ac3(board, data_store):
+
+            local_domains = deepcopy(domains)
+            local_domains.pop(cell)
+            result, STEP = backtracking_with_ac3(board, data_store, STEP)
+            if result:
                 data_store.store(STEP, domains)
-                return True
+                return True, STEP
             else:
                 board.setItem(row, col, 0)
-                return False
+                return False, STEP
 
     for cell, values in domains.items():
         row, col = cell
         for value in values:
             board.setItem(row, col, value)
             STEP += 1
-            if dfs_with_ac3(board, data_store):
-                return True
+            result, STEP = backtracking_with_ac3(board, data_store, STEP)
+            if result:
+                return True, STEP
 
             board.setItem(row, col, 0)
 
     data_store.store(STEP, domains)
-    return False
+    return False, STEP
 
 
 # Example Sudoku board (0 represents empty cells)
@@ -117,7 +118,7 @@ def dfs_with_ac3(board: Board, data_store: SolveDataStore):
 # if __name__ == "__main__":
 #     board = Board(input_board)
 #     data_store = SolveDataStore(board)
-#     if dfs_with_ac3(board, data_store):
+#     if backtracking_with_ac3(board, data_store):
 #         print("Sudoku solved:")
 #         print_board(board)
 #     else:
@@ -127,24 +128,27 @@ def dfs_with_ac3(board: Board, data_store: SolveDataStore):
 
 
 def main(puzzle):
+    global STEP
+    STEP = 0
     input_board = parse_puzzle(puzzle)
     board = Board(input_board)
     data_store = SolveDataStore(board)
-    if dfs_with_ac3(board, data_store):
+
+    if backtracking_with_ac3(board, data_store, STEP):
         print("Sudoku solved:")
         print_board(board)
     else:
         print("No solution exists for the given Sudoku board.")
 
-    data_store.save("./" + NAME + "/" + puzzle + ".json")
+    data_store.save("./" + "backend/data/" + NAME + "/" + puzzle + ".json")
 
 
-example = "070000043040009610800634900094052000358460020000800530080070091902100005007040802"
+# example = "070000043040009610800634900094052000358460020000800530080070091902100005007040802"
 
-example_extra = "000006300000200005080000000006200040000000010000090000910080000000600078000000090"
-example_hard = "009073000607000008000800937092008654053649172000125800700000010004000009968302000"
+# example_extra = "000006300000200005080000000006200040000000010000090000910080000000600078000000090"
+# example_hard = "009073000607000008000800937092008654053649172000125800700000010004000009968302000"
 
-example_sayat = "500200040000603000030009007003007000007008000600000020080000003000400600000100500"
+# example_sayat = "500200040000603000030009007003007000007008000600000020080000003000400600000100500"
 
-zeros = "000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-main(example_hard)
+# zeros = "000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+# main(example_hard)
