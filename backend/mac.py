@@ -12,7 +12,7 @@ from shared.parser import parse_puzzle
 
 NAME = "mac"
 
-def ac3(board, data_store, STEP):
+def ac3(board, data_store, STEP, arc=None, domains=None):
 
     def revise(X1, X2):
         revised = False
@@ -21,22 +21,33 @@ def ac3(board, data_store, STEP):
             if len(domains[X2] - {value,}) == 0:
                  to_remove.add(value)
                  revised = True
+
         if revised:
             domains[X1] = domains[X1] - to_remove
         
         return revised
 
     queue = Queue()
-    domains, valid = get_domains_for_all_empty_cells(board)
 
-    if not valid:
-        return None
 
-    for key in domains.keys():
-        row, col = key
+    if arc is None:
+        domains, valid = get_domains_for_all_empty_cells(board)
+
+        if not valid:
+            return None
+
+        for key in domains.keys():
+            row, col = key
+            for ni, nj in board.get_neighbors(row, col):
+                if board.getItem(ni, nj) == 0:
+                    queue.put(((row, col), (ni, nj))) 
+
+    else:
+        row, col = arc
         for ni, nj in board.get_neighbors(row, col):
-           if board.getItem(ni, nj) == 0:
-               queue.put(((row, col), (ni, nj))) 
+            if board.getItem(ni, nj) == 0:
+                queue.put(((row, col), (ni, nj))) 
+
 
     while not queue.empty():
         X1, X2 = queue.get()
@@ -54,7 +65,7 @@ def ac3(board, data_store, STEP):
     return domains, STEP
 
 
-def backtracking_with_ac3(board: Board, data_store: SolveDataStore, STEP):
+def backtracking_with_ac3(board: Board, data_store: SolveDataStore, STEP, domains):
     empty_cell = find_empty_cell(board)
 
     if not empty_cell:
@@ -62,39 +73,47 @@ def backtracking_with_ac3(board: Board, data_store: SolveDataStore, STEP):
 
     row, col = empty_cell
 
-    domains = ac3(board, data_store, STEP)
     if not domains:
         return False, STEP
-    domains, STEP = domains
 
     data_store.store(STEP, domains)
 
     for cell, values in domains.items():
-        if len(values) == 1:
-            row, col = cell
-            board.setItem(row, col, next(iter(values)))
-            STEP += 1
+        row, col = cell
+        if board.getItem(row, col) == 0:
+            if len(values) == 1:
+                
+                board.setItem(row, col, next(iter(values)))
+                STEP += 1
 
-            local_domains = deepcopy(domains)
-            local_domains.pop(cell)
-            result, STEP = backtracking_with_ac3(board, data_store, STEP)
-            if result:
-                data_store.store(STEP, domains)
-                return True, STEP
-            else:
-                board.setItem(row, col, 0)
-                return False, STEP
+                local_domains = deepcopy(domains)
+                local_domains[cell] = {next(iter(values)),}
+                local_domains, STEP = backtracking_with_ac3(board, data_store, STEP, local_domains)
+                if local_domains:
+                    data_store.store(STEP, domains)
+                    return True, STEP
+                else:
+                    board.setItem(row, col, 0)
+                    return False, STEP
 
     for cell, values in domains.items():
         row, col = cell
-        for value in values:
-            board.setItem(row, col, value)
-            STEP += 1
-            result, STEP = backtracking_with_ac3(board, data_store, STEP)
-            if result:
-                return True, STEP
+        if board.getItem(row, col) == 0:
 
-            board.setItem(row, col, 0)
+            for value in values:
+                board.setItem(row, col, value)
+                local_domains = deepcopy(domains)
+                local_domains, STEP = ac3(board, data_store, STEP, (row, col), local_domains)
+                local_domains[cell] = {next(iter(values)),}
+
+
+                STEP += 1
+                local_domains, STEP = backtracking_with_ac3(board, data_store, STEP, local_domains)
+                if local_domains:
+                    return True, STEP
+                else:
+                    board.setItem(row, col, 0)
+                    return False, STEP
 
     data_store.store(STEP, domains)
     return False, STEP
@@ -133,8 +152,9 @@ def main(puzzle):
     input_board = parse_puzzle(puzzle)
     board = Board(input_board)
     data_store = SolveDataStore(board)
+    domains,STEP = ac3(board, data_store, STEP)
 
-    if backtracking_with_ac3(board, data_store, STEP):
+    if backtracking_with_ac3(board, data_store, STEP,domains):
         print("Sudoku solved:")
         print_board(board)
     else:
@@ -145,10 +165,11 @@ def main(puzzle):
 
 # example = "070000043040009610800634900094052000358460020000800530080070091902100005007040802"
 
-# example_extra = "000006300000200005080000000006200040000000010000090000910080000000600078000000090"
+example_extra = "000006300000200005080000000006200040000000010000090000910080000000600078000000090"
 # example_hard = "009073000607000008000800937092008654053649172000125800700000010004000009968302000"
 
-# example_sayat = "500200040000603000030009007003007000007008000600000020080000003000400600000100500"
+# example_extra_hard = "500200040000603000030009007003007000007008000600000020080000003000400600000100500"
 
 # zeros = "000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-# main(example_hard)
+main(example_extra)
+1

@@ -4,15 +4,14 @@ from os import path
 
 
 def print_board(board):
-    pass
-    # for i in range(9):
-    #     for j in range(9):
-    #         print(board.getItem(i, j), end=" ")
-    #         if (j + 1) % 3 == 0:
-    #             print("|", end=" ")
-    #     print()
-    #     if (i + 1) % 3 == 0:
-    #         print("- " * 11)
+    for i in range(9):
+        for j in range(9):
+            print(board.getItem(i, j), end=" ")
+            if (j + 1) % 3 == 0:
+                print("|", end=" ")
+        print()
+        if (i + 1) % 3 == 0:
+            print("- " * 11)
 
 
 class SolveDataStore:
@@ -28,9 +27,6 @@ class SolveDataStore:
         domain = self.convert_domain(domain)
         self.data[self.index]['domains'] = domain
         self.index += 1
-
-    def store(self, step):
-        self.data[self.index] = {'board': deepcopy(self.board.get_current_state()), 'step': step}
 
     def save(self, filename):
         final_data = {}

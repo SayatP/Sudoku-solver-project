@@ -1,6 +1,9 @@
 const fetchData = async (url) => {
   const response = await fetch(url);
+  console.log(response)
+
   const data = await response.json();
+
   return data;
 }
 
@@ -9,9 +12,6 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 
 const drawBoard = (view, board) => {
-
-
-
   board.forEach((row, rowIndex) => {
     row.forEach((cell, cellIndex) => {
       const outhterSquareIndex = Math.floor(rowIndex / 3) * 3 + Math.floor(cellIndex / 3);
@@ -58,7 +58,7 @@ const handleGameStart = async (e) => {
       autoPlay
     } = Object.fromEntries(new FormData(form).entries());
 
-    const gameSolutionData = Object.values(await fetchData(`/Sudoku-solver-project/${algorithm}/${gameData.trim()}.json`));
+    const gameSolutionData = Object.values(await fetchData(`/Sudoku-solver-project/backend/data/${algorithm}/${gameData.trim()}.json`));
 
     if (autoPlay === "on") {
       gameControls.querySelectorAll('button').forEach((button) => {
