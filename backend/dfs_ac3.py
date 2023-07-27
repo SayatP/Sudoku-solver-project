@@ -4,7 +4,7 @@ from copy import copy
 from choose_empty_cell import find_empty_cell
 
 from shared.board import Board
-from shared.validation import get_basic_domain
+from shared.validation import get_domains_for_all_empty_cells
 
 from shared.output import print_board, SolveData
 
@@ -13,29 +13,46 @@ STEP = 0
 
 
 def ac3(board):
+
+    def revise(X1, X2):
+        revised = False
+        to_remove = set()
+        for value in domains[X1]:
+            if len(domains[X2] - {value,}) == 0:
+                 to_remove.add(value)
+                 revised = True
+        if revised:
+            domains[X1] = domains[X1] - to_remove
+        
+        return revised
+
     queue = Queue()
-    domains = {}
-    # set base domains
-    for row in range(9):
-        for col in range(9):
-            domain = get_basic_domain(board, row, col)
-            domains[(row, col)] = set(domain)
+    domains, valid = get_domains_for_all_empty_cells(board)
 
-    [queue.put((i, j)) for i in range(9) for j in range(9) if board.getItem(i, j) == 0]
+    if not valid:
 
-    while queue:
-        i, j = queue.get()
-        cell_value = board.getItem(i, j)
+        return None
 
-        for ni, nj in board.get_neighbors(i, j):
-            if board.getItem(ni, nj) == 0:
-                new_domain = domains[(ni, nj)].difference({cell_value})
+    for key in domains.keys():
+        row, col = key
+        for ni, nj in board.get_neighbors(row, col):
+           if board.getItem(ni, nj) == 0:
+               queue.put(((row, col), (ni, nj))) 
 
-                if domains[(ni, nj)] != new_domain:
-                    domains[(ni, nj)] = new_domain
-                    queue.append((ni, nj))
+    while not queue.empty():
+        X1, X2 = queue.get()
+        
+        if revise(X1, X2):
+            if len(domains[X1]) == 0:
+                return None
+            else:
+                for ni, nj in board.get_neighbors(X1[0], X1[1]):
+                    if board.getItem(ni, nj) == 0:
+                        queue.put(((ni, nj), (X1[0], X1[1]))) 
 
     return domains
+
+
 
 
 def solve_sudoku(board: Board, data_store):
@@ -48,29 +65,32 @@ def solve_sudoku(board: Board, data_store):
         return True  # The board is already filled, so it's solved
 
     row, col = empty_cell
-    domain = ac3(board)
-    set_at_lest_one_by_ac3 = False
+    domains = ac3(board)
 
-    for cell, values in domain.items():
+    if not domains:
+        return False
+
+
+    for cell, values in domains.items():
         if len(values) == 1:
             row, col = cell
             board.setItem(row, col, next(iter(values)))
-
-    if set_at_lest_one_by_ac3:
-        STEP += 1
-        if solve_sudoku(board, data_store):
-            return True
-
-    else:
-        for cell, values in domain.items():
-            i, j = cell
-            for value in values:
-                board.setItem(row, col, value)
-                STEP += 1
-                if solve_sudoku(board, data_store):
-                    return True
-
+            STEP += 1
+            if solve_sudoku(board, data_store):
+                return True
+            else:
                 board.setItem(row, col, 0)
+                return False
+
+    for cell, values in domains.items():
+        row, col = cell
+        for value in values:
+            board.setItem(row, col, value)
+            STEP += 1
+            if solve_sudoku(board, data_store):
+                return True
+
+            board.setItem(row, col, 0)
 
     return False
 
@@ -98,4 +118,5 @@ if __name__ == "__main__":
     else:
         print("No solution exists for the given Sudoku board.")
 
+    print(STEP)
     data_store.save("result.json")

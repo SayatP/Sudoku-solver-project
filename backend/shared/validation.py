@@ -27,15 +27,15 @@ def get_basic_domain(board, row, col):
     board.setDomain(row, col, domain)
     return domain
 
+def get_domains_for_all_empty_cells(board):
+    domains = {}
+    # set base domains
+    for row in range(9):
+        for col in range(9):
+            if board.getItem(row, col) == 0:
+                domain = get_basic_domain(board, row, col)
+                if len(domain) == 0:
+                    return None, False
+                domains[(row, col)] = set(domain)
 
-[
-    [5, 3, 0, 0, 7, 0, 0, 0, 0],
-    [6, 0, 0, 1, 9, 5, 0, 0, 0],
-    [0, 9, 8, 0, 0, 0, 0, 6, 0],
-    [8, 0, 0, 0, 6, 0, 0, 0, 3],
-    [4, 0, 0, 8, 0, 3, 0, 0, 1],
-    [7, 0, 0, 0, 2, 0, 0, 0, 6],
-    [0, 6, 0, 0, 0, 0, 2, 8, 0],
-    [0, 0, 0, 4, 1, 9, 0, 0, 5],
-    [0, 0, 0, 0, 8, 0, 0, 7, 9],
-]
+    return domains, True
