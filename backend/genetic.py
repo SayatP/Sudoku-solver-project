@@ -94,7 +94,6 @@ def genetic_algorithm_solver(board, puzzle):
         for generation in range(100):
             # Evaluate fitness of each board in the population (lower is better)
             fitness_scores = evaluate_fitness_in_threads(population)
-            # [evaluate_fitness(board) for board in population]
 
             # Select the best-performing boards to form the next generation
             best_boards = select_best_boards(population, fitness_scores)
@@ -144,7 +143,7 @@ def select_best_boards(population, fitness_scores):
 def create_next_generation(boards):
     # Create the next generation through crossover and mutation
     next_generation = []
-    for _ in range(700):  # Creating 50 new boards
+    for _ in range(700):  # Creating 700 new boards
         parent1, parent2 = random.sample(boards, 2)
         child = crossover(parent1.get_unwrapped_state(), parent2.get_unwrapped_state())
         mutate(Board(child))
