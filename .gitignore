@@ -163,3 +163,4 @@ cython_debug/
 /backtracking
 /backtracking_ac3
 /backend/data
+*.json

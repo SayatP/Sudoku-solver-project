@@ -21,6 +21,7 @@ def get_basic_domain(board, row, col):
     domain = [i for i in range(1, 10) if is_valid(board.data, row, col, i)]
     return domain
 
+
 def get_domains_for_all_empty_cells(board):
     domains = {}
     # set base domains
@@ -33,3 +34,11 @@ def get_domains_for_all_empty_cells(board):
                 domains[(row, col)] = set(domain)
 
     return domains, True
+
+def find_empty_cell(board):
+    for i in range(9):
+        for j in range(9):
+            if board.data[i][j] == 0:
+                return i, j
+
+    return None

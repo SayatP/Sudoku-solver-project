@@ -21,11 +21,14 @@ class SolveDataStore:
         self.index = 0
 
     def store(self, step, domains):
-        self.data[self.index] = {'board': deepcopy(self.board.get_current_state()), 'step': step}
+        self.data[self.index] = {
+            "board": deepcopy(self.board.get_current_state()),
+            "step": step,
+        }
 
         domain = deepcopy({f"{k[0]}{k[1]}": list(v) for k, v in domains.items()})
         domain = self.convert_domain(domain)
-        self.data[self.index]['domains'] = domain
+        self.data[self.index]["domains"] = domain
         self.index += 1
 
     def save(self, filename):

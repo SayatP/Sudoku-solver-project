@@ -25,22 +25,25 @@ def is_valid_candidate(board, row, col, num):
     # Check if placing 'num' in the given position (row, col) is valid
 
     for i in range(9):
-        if ((not board.getCell(row, i).modifiable) and board.getItem(row, i) == num) \
-                or ((not board.getCell(i, col).modifiable) and board.getItem(i, col) == num):
+        if (
+            (not board.getCell(row, i).modifiable) and board.getItem(row, i) == num
+        ) or ((not board.getCell(i, col).modifiable) and board.getItem(i, col) == num):
             return False
 
     start_row, start_col = 3 * (row // 3), 3 * (col // 3)
     for i in range(3):
         for j in range(3):
-            if board.getItem(start_row + i, start_col + j) == num and board.getCell(start_row + i,
-                                                                                    start_col + j).modifiable == False:
+            if (
+                board.getItem(start_row + i, start_col + j) == num
+                and board.getCell(start_row + i, start_col + j).modifiable == False
+            ):
                 return False
     return True
 
 
 def print_board(board):
     for row in board.get_current_state():
-        print(' '.join(str(num.get_state()) for num in row))
+        print(" ".join(str(num.get_state()) for num in row))
 
 
 def createIndividual(board):
@@ -51,7 +54,7 @@ def createIndividual(board):
             itemInBoard = board.getItem(i, j)
             if itemInBoard == 0:
                 candidate = random.randint(1, 9)
-                while (not is_valid_candidate(board, i, j, candidate)):
+                while not is_valid_candidate(board, i, j, candidate):
                     candidate = random.randint(1, 9)
                 newBoard.setItem(i, j, candidate)
                 newBoard.getCell(i, j).set_modifiable(True)
@@ -124,7 +127,9 @@ def evaluate_fitness(board):
             if [data[x][j] for x in range(9)].count(data[i][j]) > 1:
                 conflicts += 1
             start_row, start_col = 3 * (i // 3), 3 * (j // 3)
-            if [data[start_row + x][start_col + y] for x in range(3) for y in range(3)].count(data[i][j]) > 1:
+            if [
+                data[start_row + x][start_col + y] for x in range(3) for y in range(3)
+            ].count(data[i][j]) > 1:
                 conflicts += 1
 
     return conflicts
@@ -133,7 +138,7 @@ def evaluate_fitness(board):
 def select_best_boards(population, fitness_scores):
     # Select the best-performing boards based on their fitness scores
     sorted_boards = [board for _, board in sorted(zip(fitness_scores, population))]
-    return sorted_boards[:len(sorted_boards) // 3]
+    return sorted_boards[: len(sorted_boards) // 3]
 
 
 def create_next_generation(boards):
@@ -203,12 +208,22 @@ def main(puzzle):
     print_board(genetic_algorithm_solver(board, puzzle))
 
 
-example = "070000043040009610800634900094052000358460020000800530080070091902100005007040802"
+example = (
+    "070000043040009610800634900094052000358460020000800530080070091902100005007040802"
+)
 
-example_extra = "000006300000200005080000000006200040000000010000090000910080000000600078000000090"
-example_hard = "009073000607000008000800937092008654053649172000125800700000010004000009968302000"
+example_extra = (
+    "000006300000200005080000000006200040000000010000090000910080000000600078000000090"
+)
+example_hard = (
+    "009073000607000008000800937092008654053649172000125800700000010004000009968302000"
+)
 
-example_extra_hard = "500200040000603000030009007003007000007008000600000020080000003000400600000100500"
+example_extra_hard = (
+    "500200040000603000030009007003007000007008000600000020080000003000400600000100500"
+)
 
-zeros = "000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+zeros = (
+    "000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+)
 # main(example_hard)

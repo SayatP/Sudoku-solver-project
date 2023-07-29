@@ -8,6 +8,7 @@ from mac import main as mac
 from backtracking import main as backtracking
 from backtracking_ac3 import main as backtracking_ac3
 from backtracking_mrv import main as backtracking_mrv
+from genetic import main as genetic
 
 TIMEOUT = 5
 
@@ -19,6 +20,7 @@ algos = {
     "backtracking": backtracking,
     "backtracking_ac3": backtracking_ac3,
     "backtracking_mrv": backtracking_mrv,
+    "genetic": genetic,
 }
 
 
@@ -27,11 +29,12 @@ results = {
     "backtracking": {},
     "backtracking_ac3": {},
     "backtracking_mrv": {},
+    "genetic": {},
 }
 
 for k, v in algos.items():
     global_start = time.time()
-    for puzzle in tqdm.tqdm(puzzles[500:]):
+    for puzzle in tqdm.tqdm(puzzles[:50]):
         # backtracking(puzzle)
         # backtracking_ac3(puzzle)
         terminated = False
@@ -41,7 +44,7 @@ for k, v in algos.items():
         p.join(TIMEOUT)
 
         if p.is_alive():
-            print('function terminated')
+            print("function terminated")
             terminated = True
             p.terminate()
             p.join()
@@ -52,9 +55,8 @@ for k, v in algos.items():
         else:
             results[k][puzzle] = 0
 
-
     global_end = time.time()
     results[k]["time_for_1000"] = global_end - global_start
 
-    with open("results2.json", "w") as f:
+    with open("results1.json", "w") as f:
         json.dump(results, f)

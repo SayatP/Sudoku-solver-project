@@ -21,7 +21,6 @@ class Cell:
 
 
 class Board:
-
     def __init__(self, data):
         self.data = [[Cell(element) for element in row] for row in data]
 

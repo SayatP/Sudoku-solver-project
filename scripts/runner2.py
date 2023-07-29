@@ -31,7 +31,7 @@ results = {
 
 for k, v in algos.items():
     global_start = time.time()
-    for puzzle in tqdm.tqdm(puzzles[:500]):
+    for puzzle in tqdm.tqdm(puzzles[500:]):
         # backtracking(puzzle)
         # backtracking_ac3(puzzle)
         terminated = False
@@ -41,7 +41,7 @@ for k, v in algos.items():
         p.join(TIMEOUT)
 
         if p.is_alive():
-            print('function terminated')
+            print("function terminated")
             terminated = True
             p.terminate()
             p.join()
@@ -52,9 +52,8 @@ for k, v in algos.items():
         else:
             results[k][puzzle] = 0
 
-
     global_end = time.time()
     results[k]["time_for_1000"] = global_end - global_start
 
-    with open("results1.json", "w") as f:
+    with open("results2.json", "w") as f:
         json.dump(results, f)
