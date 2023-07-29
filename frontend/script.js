@@ -58,7 +58,7 @@ const handleGameStart = async (e) => {
       autoPlay
     } = Object.fromEntries(new FormData(form).entries());
 
-    const gameSolutionData = Object.values(await fetchData(`/Sudoku-solver-project/backend/data/${algorithm}/${gameData.trim()}.json`));
+    const gameSolutionData = Object.values(await fetchData(`/backend/data/${algorithm}/${gameData.trim()}.json`));
 
     if (autoPlay === "on") {
       gameControls.querySelectorAll('button').forEach((button) => {
